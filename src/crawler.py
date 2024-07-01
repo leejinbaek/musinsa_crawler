@@ -12,6 +12,7 @@ import time
 
 # 초기 설정
 options = Options()
+options.add_argument("headless")
 options.add_argument("--start-maximized")
 options.add_experimental_option("detach", True)
 
@@ -112,18 +113,18 @@ def crawler():
         "아우터" : "002",
         "바지" : "003",
         "원피스" : "020",
-        "신발" : "018",
+        "신발" : "005",
         "가방" : "004",
-        "패션소품" : "007",
-        "언더웨어" : "026",
+        "모자" : "007",
+        "액세서리" : "011",
         "뷰티" : "015",
         "라이프": "012" 
         }
         while True:
-            keyword = input("상의, 바지, 아우터, 원피스, 신발, 가방, 패션소품, 언더웨어, 뷰티, 라이프 중 한 가지 키워드를 입력하세요: ")
-            #키워드 이쪽에 넣기
+            keyword = input("상의, 바지, 아우터, 원피스, 신발, 가방, 모자, 액세서리, 뷰티, 라이프 중 한 가지 키워드를 입력하세요: ")
             if keyword in category:
                 url = f"https://www.musinsa.com/categories/item/{category[keyword]}?device=mw&sortCode=3m"
+                print("데이터 수집중.....")
                 break
             else:
                 print("키워드가 올바르지 않습니다. 다시 입력해주세요")
@@ -138,7 +139,7 @@ def crawler():
             raise ValueError("search_era not found")
         
         #크롤링
-        clothes_db = page_crawling(driver,1000,limit)
+        clothes_db = page_crawling(driver,10000,limit)
         
         #저장
         with open(f"{keyword}_musinsa_top{limit}", "w", newline='', encoding='utf-8-sig') as file:
