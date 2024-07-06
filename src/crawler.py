@@ -99,15 +99,7 @@ def page_crawling(driver,limit, max_item_InList):
 # 메인
 def crawler():
     try:
-        while True:
-            try:
-                limit = int(input("수집할 데이터의 수를 입력하세요: "))
-                break
-            except ValueError:
-                print("올바른 숫자를 입력하세요")
-                
         print("해당 크롤러는 무신사 상품의 인기 상품들을 순서대로 보여줍니다.")
-        print("최근 3개월간의 판매량을 기준으로 데이터를 수집합니다.")
         category = {
         "상의" : "001",
         "아우터" : "002",
@@ -120,14 +112,36 @@ def crawler():
         "뷰티" : "015",
         "라이프": "012" 
         }
+        date_db = {
+            "1일" : "1d",
+            "1주일" : "1w",
+            "1개월" : "1m",
+            "3개월" : "3m",
+            "1년" : "1y"
+        }
         while True:
-            keyword = input("상의, 바지, 아우터, 원피스, 신발, 가방, 모자, 액세서리, 뷰티, 라이프 중 한 가지 키워드를 입력하세요: ")
-            if keyword in category:
-                url = f"https://www.musinsa.com/categories/item/{category[keyword]}?device=mw&sortCode=3m"
-                print("데이터 수집중.....")
+            try:
+                limit = int(input("수집할 데이터의 수를 입력하세요: "))
                 break
-            else:
-                print("키워드가 올바르지 않습니다. 다시 입력해주세요")
+            except ValueError:
+                print("올바른 숫자를 입력하세요")
+        while True:
+            while True:
+                keyword = input("상의, 바지, 아우터, 원피스, 신발, 가방, 모자, 액세서리, 뷰티, 라이프 중 한 가지 키워드를 입력하세요: ")
+                if keyword in category:
+                    break
+                else:
+                    print("키워드가 올바르지 않습니다. 다시 입력해주세요.")
+            while True:
+                date = input("1일, 1주일, 1개월, 3개월, 1년 중 수집 기간을 선택하세요: ")
+                if date in date_db:
+                    break
+                else:
+                    print("수집기간이 올바르지 않습니다. 다시 입력해주세요.")
+                    
+            url = f"https://www.musinsa.com/categories/item/{category[keyword]}?device=mw&sortCode={date_db[date]}"
+            print("데이터 수집중.....")
+            break
                 
         #카테고리에 맞는 url로 이동
         driver.get(url)
@@ -142,7 +156,7 @@ def crawler():
         clothes_db = page_crawling(driver,10000,limit)
         
         #저장
-        with open(f"{keyword}_musinsa_top{limit}", "w", newline='', encoding='utf-8-sig') as file:
+        with open(f"{keyword}_musinsa_top{limit}_{date}기준", "w", newline='', encoding='utf-8-sig') as file:
             writer = csv.writer(file)
             writer.writerow(["판매처", "제품명", "할인 전 판매가", "할인율", "판매가", "재고 상태"])
             for clothes in clothes_db:
